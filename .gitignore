@@ -1,2 +1,4 @@
 ./files/.terraform/
 ./files/.terraform.lock.hcl
+./files/terraform.tfstate
+./files/terraform.tfstate.backup
