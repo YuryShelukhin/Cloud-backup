@@ -1,0 +1,19 @@
+#cloud-config
+ disable_root: true
+ timezone: Europe/Moscow
+ repo_update: true
+ apt:
+  preserve_sources_list: true
+ packages:
+  - nginx
+ runcmd:
+  - [ systemctl, nginx-reload ]
+  - [ systemctl, enable, nginx.service ]
+  - [ systemctl, start, --no-block, nginx.service ]
+ users:
+  - name: yury
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ${file("/home/yury/.ssh/id_rsa.pub")}

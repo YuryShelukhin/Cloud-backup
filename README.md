@@ -21,8 +21,6 @@
 - создаст [таргет-группу](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/lb_target_group). Поместите в неё созданные на шаге 1 виртуальные машины;
 - создаст [сетевой балансировщик нагрузки](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/lb_network_load_balancer), который слушает на порту 80, отправляет трафик на порт 80 виртуальных машин и http healthcheck на порт 80 виртуальных машин.
 
-Рекомендуем изучить [документацию сетевого балансировщика нагрузки](https://cloud.yandex.ru/docs/network-load-balancer/quickstart) для того, чтобы было понятно, что вы сделали.
-
 2. Установите на созданные виртуальные машины пакет Nginx любым удобным способом и запустите Nginx веб-сервер на порту 80.
 
 3. Перейдите в веб-консоль Yandex Cloud и убедитесь, что: 
@@ -40,17 +38,44 @@
 ---
 
 ### Решение 1.
-1. Cоздадим зеркальную копию домашней директории пользователя в директорию /tmp/backup.  
-`rsync -a --progress ~ /tmp/backup`  
-<img src = "img/1-1.png" width = 60%>  
+1. Установим Terraform    
+`sudo snap install terraform --classic`
+ 
+<img src = "img/1-1.png" width = 60%>      
 
-2. Исключим из синхронизации все директории, начинающиеся с точки (скрытые).    
-`rsync -a --exclude='.*/' ~ /tmp/backup`
-<img src = "img/1-2.png" width = 60%>   
+2. Создадим плейбук. Установим Nginx путем передачи в Terraform  параметров с помощью #cloud-config в файле metadata.yaml. Ключ от сервисного аккаунта укажем в отдельном файле. 
+   
+`   terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+  required_version = ">= 0.13"
+}` 
 
-3. Cделаем так, чтобы rsync подсчитывал хэш-суммы для всех файлов, даже если их время модификации и размер идентичны в источнике и приемнике.    
-`rsync -ac --progress --exclude='.*/' ~ /tmp/backup`
+`provider "yandex" {
+  service_account_key_file = "/home/yury/key.json" 
+  cloud_id                 = "b1ge6ksn8gkr97asu03a"
+  folder_id                = "b1gsn46kdu9vi56ievnv"
+  zone      = "ru-central1-b"
+}`  
+Весь плейбук в приложенном файле
+#### Конфигурационные файлы.  
+[плейбук](files/main1.tf)  
+[cloud-config](files/metadata.yaml)
+
+3. Запустим Terraform, проверим создание виртуальных машин и балансирощика, сделаем запрос на порт 80 балансирощика, убедимся,что работает Nginx.  
+`terraform validate`  
+`terraform init`    
+`terraform apply`    
+<img src = "img/1-2.png" width = 60%>
 <img src = "img/1-3.png" width = 60%>
+<img src = "img/1-4.png" width = 60%>
+<img src = "img/1-5.png" width = 60%>
+<img src = "img/1-6.png" width = 60%>  
+  
+`terraform destroy`  
 
 ---
 
