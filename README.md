@@ -102,32 +102,19 @@
 ---
 
 ### Решение 2*.
-1. Добавим задачу в cron.  
-`sudo crontab -e`  
-<img src = "img/2-1.png" width = 60%>  
+1. Создадим плейбук и файл и файл метаданных. 
+ 
+#### Конфигурационные файлы.  
+[плейбук](files/main2.tf)  
+[cloud-config](files/metadata.yaml)
 
-2. Напишем скрипт.
-```
-#!/bin/bash
+2. Запустим Terraform, проверим создание виртуальных машин и балансирощика, сделаем запрос на порт 80 балансирощика, убедимся,что работает Nginx.    
 
-# команда rsync. Cтандартный вывод - в /dev/null, ошибки - в лог
-rsync -ac --delete /home/yury /tmp/backup > /dev/null 2>> /var/log/backup.log
-
-# проверка кода завершения rsync и запись лога
-if [ $? -eq 0 ]; then
-    echo "[$(date)] - резервное копирование успешно выполнено" >> /var/log/backup.log
-else
-    echo "[$(date)] - ошибка при выполнении резервного копирования" >> /var/log/backup.log
-fi
-```
-Сделаем скрипт исполняемым.  
-`chmod +x /home/yury/HW/Fail-safety/Reserv-copy/files/backup1.sh`  
-3. Проверим создание копии.  
-<img src = "img/2-2.png" width = 60%>  
-4. Проверим лог  
-<img src = "img/2-3.png" width = 60%>  
-
-#### Использован следующий скрипт.  
-[скрипт](files/backup1.sh)  
+<img src = "img/2-1.png" width = 60%>
+<img src = "img/2-2.png" width = 60%>
+<img src = "img/2-3.png" width = 60%>
+<img src = "img/2-4.png" width = 60%>
+<img src = "img/2-5.png" width = 60%>
+<img src = "img/2-6.png" width = 60%>  
 
 ---

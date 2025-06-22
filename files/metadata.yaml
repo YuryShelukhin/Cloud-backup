@@ -17,3 +17,4 @@
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
     ssh-authorized-keys:
       - ${file("/home/yury/.ssh/id_rsa.pub")}
+
